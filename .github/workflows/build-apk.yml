@@ -34,7 +34,7 @@ jobs:
           cp index.html www/index.html
           cp *.js www/ || true
           cp *.css www/ || true
-          cp icon.png www/ || true
+
 
       - name: Sync Android
         run: npx cap sync android
@@ -50,3 +50,4 @@ jobs:
         with:
           name: app-debug-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
+          
