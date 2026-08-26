@@ -22,23 +22,11 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Prepare project
-        run: |
-          mkdir -p www
-          cp *.html www/ 2>/dev/null || true
-          cp *.js www/ 2>/dev/null || true
-          cp *.css www/ 2>/dev/null || true
-          mkdir -p resources
-          cp icon.png resources/icon.png 2>/dev/null || true
-
       - name: Install packages
         run: npm install
 
       - name: Add Android
         run: npx cap add android
-
-      - name: Generate icon
-        run: npx capacitor-assets generate --android
 
       - name: Sync Android
         run: npx cap sync android
