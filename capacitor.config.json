@@ -1,6 +1,6 @@
 {
   "appId": "com.smritisangrokkhon.profiles",
   "appName": "স্মৃতি সংরক্ষণ",
-  "webDir": ".",
+  "webDir": "www",
   "bundledWebRuntime": false
 }
