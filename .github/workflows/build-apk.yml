@@ -26,8 +26,7 @@ jobs:
         run: npm install
 
       - name: Add Android
-        run: |
-          npx cap add android || true
+        run: npx cap add android
 
       - name: Prepare Web Assets
         run: |
@@ -38,8 +37,7 @@ jobs:
           cp icon.png www/ || true
 
       - name: Sync Android
-        run: |
-          npx cap sync android
+        run: npx cap sync android
 
       - name: Build APK
         run: |
@@ -51,8 +49,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: app-debug-apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: smriti-sangrokkhon-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
