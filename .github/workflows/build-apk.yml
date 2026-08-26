@@ -25,6 +25,9 @@ jobs:
       - name: Install packages
         run: npm install
 
+      - name: Clean Android
+        run: rm -rf android
+
       - name: Add Android
         run: npx cap add android
 
@@ -36,6 +39,9 @@ jobs:
           cp *.css www/ || true
 
 
+      - name: Build Web
+        run: npm run build
+        
       - name: Sync Android
         run: npx cap sync android
 
