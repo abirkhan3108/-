@@ -1,0 +1,59 @@
+<!doctype html><html lang="bn"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin Dashboard</title><link rel="stylesheet" href="style.css"></head><body>
+<header class="topbar"><button class="icon-btn" onclick="location.href='index.html'">←</button><div><h1>Admin Dashboard</h1><small>Profile Management</small></div><span></span></header>
+<main class="container admin-dashboard">
+<section class="dashboard-head">
+  <div>
+    <span class="eyebrow">ADMIN PANEL</span>
+    <h2>Profile Management</h2>
+    <p>Profile যোগ, খোঁজা, Edit এবং Delete এক জায়গা থেকে পরিচালনা করুন।</p>
+  </div>
+  <button id="logoutBtn" class="logout-btn">↪ Logout</button>
+</section>
+
+<section id="loginSection" class="search-card login-card">
+  <div class="dash-icon">🔐</div>
+  <h2>Admin Login</h2><p>শুধু অনুমোদিত Admin প্রবেশ করতে পারবেন</p>
+  <form id="loginForm">
+    <input id="email" type="email" required placeholder="Admin Email">
+    <input id="password" type="password" required placeholder="Password">
+    <button class="primary full-btn">Login</button>
+  </form>
+  <p id="loginMsg"></p>
+</section>
+
+<section id="adminPanel" class="hidden">
+  <div class="dash-stats">
+    <div class="dash-stat"><span>👥</span><small>Total Profiles</small><strong id="dashTotal">0</strong></div>
+    <div class="dash-stat"><span>📅</span><small>এই মাসে যুক্ত</small><strong id="dashMonthly">0</strong></div>
+    <div class="dash-stat"><span>🔎</span><small>Management</small><strong>Active</strong></div>
+  </div>
+
+  <section class="dashboard-card">
+    <div class="section-title"><div><h3>➕ নতুন Profile</h3><p>নতুন ব্যক্তির তথ্য ও ছবি যোগ করুন</p></div></div>
+    <form id="profileForm">
+      <div class="form-grid">
+        <input name="name" required placeholder="নাম *">
+        <input name="father" placeholder="পিতা/স্বামীর নাম">
+        <input name="village" placeholder="গ্রাম">
+        <input name="age" type="number" placeholder="বয়স">
+        <input name="death_reason" placeholder="মৃত্যুর কারণ">
+        <input name="date" type="date">
+      </div>
+      <label class="upload-label">🖼️ Profile Photo
+        <input id="photoFile" type="file" accept="image/*">
+      </label>
+      <button class="primary full-btn">➕ Profile যোগ করুন</button>
+      <p id="adminMsg"></p>
+    </form>
+  </section>
+
+  <section class="dashboard-card">
+    <div class="section-title"><div><h3>👤 Profiles</h3><p>Profile খুঁজে Edit অথবা Delete করুন</p></div></div>
+    <div class="admin-search">
+      <input id="adminSearch" type="search" placeholder="নাম দিয়ে Profile খুঁজুন...">
+      <button id="adminSearchBtn" class="primary">🔍 Search</button>
+    </div>
+    <div id="adminProfiles" class="profile-list"></div>
+  </section>
+</section>
+</main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js"></script><script src="admin.js"></script></body></html>
