@@ -1,6 +1,19 @@
-"scripts": {
-  "build": "vite build",
-  "sync": "npx cap sync android",
-  "open:android": "npx cap open android",
-  "icons": "npx capacitor-assets generate --android"
+{
+  "name": "smriti-sangrokkhon",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "vite build",
+    "sync": "npx cap sync android",
+    "open:android": "npx cap open android",
+    "icons": "npx capacitor-assets generate --android"
+  },
+  "dependencies": {
+    "@capacitor/core": "latest",
+    "@capacitor/android": "latest"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "latest",
+    "@capacitor/assets": "^3.0.5"
+  }
 }
