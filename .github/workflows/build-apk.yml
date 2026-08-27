@@ -2,6 +2,9 @@ name: Build APK
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
@@ -14,23 +17,22 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: npm
+          node-version: '22.20.0'
 
       - name: Setup Java 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
-          distribution: temurin
+          distribution: 'temurin'
           java-version: '21'
+          java-package: 'jdk'
 
-      - name: Force Java 21
-        shell: bash
+      - name: Verify Java
         run: |
           echo "JAVA_HOME=$JAVA_HOME"
+          which java
+          which javac
           java -version
           javac -version
-          echo "JAVA_HOME=$JAVA_HOME" >> "$GITHUB_ENV"
-          echo "$JAVA_HOME/bin" >> "$GITHUB_PATH"
 
       - name: Install packages
         run: npm install
@@ -47,43 +49,19 @@ jobs:
       - name: Sync Android
         run: npx cap sync android
 
-      - name: Force Gradle Java 21
-        shell: bash
-        run: |
-          mkdir -p android
-
-          if [ -f android/gradle.properties ]; then
-            sed -i '/^org.gradle.java.home=/d' android/gradle.properties
-          fi
-
-          echo "org.gradle.java.home=$JAVA_HOME" >> android/gradle.properties
-
-          echo "=== JAVA CHECK ==="
-          java -version
-          javac -version
-
-          echo "=== GRADLE JAVA PROPERTY ==="
-          grep "org.gradle.java.home" android/gradle.properties || true
-
       - name: Check Gradle Java
-        shell: bash
         run: |
           cd android
           ./gradlew --version
 
       - name: Build APK
-        shell: bash
         run: |
           cd android
           ./gradlew clean
-          ./gradlew assembleDebug \
-            --no-daemon \
-            --stacktrace \
-            -Dorg.gradle.java.home="$JAVA_HOME"
+          ./gradlew assembleDebug --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: app-debug-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: error
