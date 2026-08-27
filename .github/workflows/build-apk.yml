@@ -17,17 +17,16 @@ jobs:
           node-version: '22'
           cache: npm
 
-      - name: Setup Java 21
+      - name: Setup Java 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '21'
+          java-version: '17'
 
       - name: Check Java
         run: |
-          echo "JAVA_HOME=$JAVA_HOME"
-          "$JAVA_HOME/bin/java" -version
-          "$JAVA_HOME/bin/javac" -version
+          java -version
+          javac -version
 
       - name: Install packages
         run: npm install
@@ -44,36 +43,31 @@ jobs:
       - name: Sync Android
         run: npx cap sync android
 
-      - name: Configure Android Java 21
+      - name: Configure Android Java 17
         shell: bash
         run: |
-          cat >> android/gradle.properties <<EOF
-          org.gradle.java.home=$JAVA_HOME
-          org.gradle.jvmargs=-Xmx2048m
-          EOF
+          echo "org.gradle.java.home=$JAVA_HOME" >> android/gradle.properties
+          echo "org.gradle.jvmargs=-Xmx2048m" >> android/gradle.properties
 
           cat >> android/build.gradle <<'EOF'
 
-          // Force Java 21 for all Android modules
           allprojects {
               tasks.withType(JavaCompile).configureEach {
-                  sourceCompatibility = JavaVersion.VERSION_21
-                  targetCompatibility = JavaVersion.VERSION_21
+                  sourceCompatibility = JavaVersion.VERSION_17
+                  targetCompatibility = JavaVersion.VERSION_17
               }
           }
           EOF
 
-      - name: Verify Gradle Java
-        run: |
-          cd android
-          echo "JAVA_HOME=$JAVA_HOME"
-          "$JAVA_HOME/bin/java" -version
-          "$JAVA_HOME/bin/javac" -version
-          ./gradlew -version
+          echo "=== Java ==="
+          java -version
+          javac -version
 
       - name: Build APK
+        shell: bash
         run: |
           cd android
+          ./gradlew clean
           ./gradlew assembleDebug \
             --no-daemon \
             --stacktrace \
@@ -84,3 +78,4 @@ jobs:
         with:
           name: app-debug-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
