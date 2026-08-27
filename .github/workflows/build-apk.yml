@@ -24,7 +24,6 @@ jobs:
         with:
           distribution: temurin
           java-version: "21"
-          cache: gradle
 
       - name: Check Java
         run: |
@@ -49,13 +48,12 @@ jobs:
       - name: Sync Android
         run: npx cap sync android
 
-      - name: Force Gradle to Java 21
+      - name: Configure Gradle Java 21
         run: |
           cd android
-          chmod +x gradlew
           echo "org.gradle.java.home=$JAVA_HOME" >> gradle.properties
 
-      - name: Check Gradle Java
+      - name: Check Gradle
         run: |
           cd android
           chmod +x gradlew
