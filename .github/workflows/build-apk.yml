@@ -15,15 +15,26 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22.20.0'
+          cache: npm
 
       - name: Check Node version
-        run: node -v
+        run: |
+          node -v
+          npm -v
 
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
+
+      - name: Verify Java 21
+        run: |
+          echo "JAVA_HOME=$JAVA_HOME"
+          which java
+          which javac
+          java -version
+          javac -version
 
       - name: Install packages
         run: npm install
@@ -40,8 +51,15 @@ jobs:
       - name: Sync Android
         run: npx cap sync android
 
+      - name: Check Gradle Java
+        run: |
+          cd android
+          ./gradlew --version
+
       - name: Build APK
-        run: cd android && ./gradlew assembleDebug
+        run: |
+          cd android
+          ./gradlew assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
