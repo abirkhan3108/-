@@ -14,7 +14,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '22.20.0'
+          node-version: '22'
           cache: npm
 
       - name: Setup Java 21
@@ -22,41 +22,12 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
-          check-latest: true
 
-      - name: Force Java 21
-        shell: bash
+      - name: Check Java
         run: |
-          echo "=== Java before ==="
-          java -version || true
-          javac -version || true
-
-          echo "=== Finding Java 21 ==="
-
-          JAVA21_HOME=""
-
-          if [ -n "$JAVA_HOME_21_X64" ] && [ -x "$JAVA_HOME_21_X64/bin/javac" ]; then
-            JAVA21_HOME="$JAVA_HOME_21_X64"
-          fi
-
-          if [ -z "$JAVA21_HOME" ]; then
-            JAVA21_HOME="$(dirname "$(dirname "$(readlink -f "$(which javac)")")")"
-          fi
-
-          export JAVA_HOME="$JAVA21_HOME"
-
           echo "JAVA_HOME=$JAVA_HOME"
-          echo "JAVA_HOME=$JAVA_HOME" >> "$GITHUB_ENV"
-          echo "$JAVA_HOME/bin" >> "$GITHUB_PATH"
-
-          echo "=== Java after ==="
           "$JAVA_HOME/bin/java" -version
           "$JAVA_HOME/bin/javac" -version
-
-          if ! "$JAVA_HOME/bin/javac" -version 2>&1 | grep -q '21\.'; then
-            echo "ERROR: Java 21 compiler was not found."
-            exit 1
-          fi
 
       - name: Install packages
         run: npm install
@@ -73,34 +44,40 @@ jobs:
       - name: Sync Android
         run: npx cap sync android
 
-      - name: Configure Gradle Java
+      - name: Configure Android Java 21
         shell: bash
         run: |
-          echo "org.gradle.java.home=$JAVA_HOME" >> android/gradle.properties
+          cat >> android/gradle.properties <<EOF
+          org.gradle.java.home=$JAVA_HOME
+          org.gradle.jvmargs=-Xmx2048m
+          EOF
 
-          echo "=== Final Java check ==="
+          cat >> android/build.gradle <<'EOF'
+
+          // Force Java 21 for all Android modules
+          allprojects {
+              tasks.withType(JavaCompile).configureEach {
+                  sourceCompatibility = JavaVersion.VERSION_21
+                  targetCompatibility = JavaVersion.VERSION_21
+              }
+          }
+          EOF
+
+      - name: Verify Gradle Java
+        run: |
+          cd android
           echo "JAVA_HOME=$JAVA_HOME"
           "$JAVA_HOME/bin/java" -version
           "$JAVA_HOME/bin/javac" -version
-
-      - name: Verify Gradle
-        shell: bash
-        run: |
-          cd android
           ./gradlew -version
 
       - name: Build APK
-        shell: bash
         run: |
           cd android
-
-          ./gradlew \
-            -Dorg.gradle.java.home="$JAVA_HOME" \
-            -Dorg.gradle.java.installations.paths="$JAVA_HOME" \
-            -Dorg.gradle.jvmargs="-Xmx2048m" \
-            assembleDebug \
+          ./gradlew assembleDebug \
             --no-daemon \
-            --stacktrace
+            --stacktrace \
+            -Dorg.gradle.java.home="$JAVA_HOME"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
