@@ -27,19 +27,36 @@ jobs:
       - name: Force Java 21
         shell: bash
         run: |
-          echo "JAVA_HOME before: $JAVA_HOME"
+          echo "=== Java before ==="
+          java -version || true
+          javac -version || true
 
-          if [ -n "$JAVA_HOME_21_X64" ]; then
-            export JAVA_HOME="$JAVA_HOME_21_X64"
+          echo "=== Finding Java 21 ==="
+
+          JAVA21_HOME=""
+
+          if [ -n "$JAVA_HOME_21_X64" ] && [ -x "$JAVA_HOME_21_X64/bin/javac" ]; then
+            JAVA21_HOME="$JAVA_HOME_21_X64"
           fi
 
-          echo "JAVA_HOME after: $JAVA_HOME"
+          if [ -z "$JAVA21_HOME" ]; then
+            JAVA21_HOME="$(dirname "$(dirname "$(readlink -f "$(which javac)")")")"
+          fi
 
-          echo "$JAVA_HOME/bin" >> "$GITHUB_PATH"
+          export JAVA_HOME="$JAVA21_HOME"
+
+          echo "JAVA_HOME=$JAVA_HOME"
           echo "JAVA_HOME=$JAVA_HOME" >> "$GITHUB_ENV"
+          echo "$JAVA_HOME/bin" >> "$GITHUB_PATH"
 
-          java -version
-          javac -version
+          echo "=== Java after ==="
+          "$JAVA_HOME/bin/java" -version
+          "$JAVA_HOME/bin/javac" -version
+
+          if ! "$JAVA_HOME/bin/javac" -version 2>&1 | grep -q '21\.'; then
+            echo "ERROR: Java 21 compiler was not found."
+            exit 1
+          fi
 
       - name: Install packages
         run: npm install
@@ -56,16 +73,19 @@ jobs:
       - name: Sync Android
         run: npx cap sync android
 
-      - name: Verify Gradle Java 21
+      - name: Configure Gradle Java
         shell: bash
         run: |
-          echo "JAVA_HOME=$JAVA_HOME"
-          echo "PATH=$PATH"
-          which java
-          which javac
-          java -version
-          javac -version
+          echo "org.gradle.java.home=$JAVA_HOME" >> android/gradle.properties
 
+          echo "=== Final Java check ==="
+          echo "JAVA_HOME=$JAVA_HOME"
+          "$JAVA_HOME/bin/java" -version
+          "$JAVA_HOME/bin/javac" -version
+
+      - name: Verify Gradle
+        shell: bash
+        run: |
           cd android
           ./gradlew -version
 
@@ -76,6 +96,7 @@ jobs:
 
           ./gradlew \
             -Dorg.gradle.java.home="$JAVA_HOME" \
+            -Dorg.gradle.java.installations.paths="$JAVA_HOME" \
             -Dorg.gradle.jvmargs="-Xmx2048m" \
             assembleDebug \
             --no-daemon \
