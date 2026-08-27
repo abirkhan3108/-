@@ -1,50 +1,50 @@
 name: Build APK
 
 on:
-workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
-build:
-runs-on: ubuntu-latest
+  build:
+    runs-on: ubuntu-latest
 
-steps:
-  - name: Checkout
-    uses: actions/checkout@v4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-  - name: Setup Node
-    uses: actions/setup-node@v4
-    with:
-      node-version: '22.20.0'
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.20.0'
 
-  - name: Check Node version
-    run: node -v
+      - name: Check Node version
+        run: node -v
 
-  - name: Setup Java
-    uses: actions/setup-java@v4
-    with:
-      distribution: temurin
-      java-version: '17'
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
 
-  - name: Install packages
-    run: npm install
+      - name: Install packages
+        run: npm install
 
-  - name: Build Web
-    run: npm run build
+      - name: Build Web
+        run: npm run build
 
-  - name: Clean old Android
-    run: rm -rf android
+      - name: Clean old Android
+        run: rm -rf android
 
-  - name: Add Android
-    run: npx cap add android
+      - name: Add Android
+        run: npx cap add android
 
-  - name: Sync Android
-    run: npx cap sync android
+      - name: Sync Android
+        run: npx cap sync android
 
-  - name: Build APK
-    run: cd android && ./gradlew assembleDebug
+      - name: Build APK
+        run: cd android && ./gradlew assembleDebug
 
-  - name: Upload APK
-    uses: actions/upload-artifact@v4
-    with:
-      name: app-debug-apk
-      path: android/app/build/outputs/apk/debug/app-debug.apk
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
