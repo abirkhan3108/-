@@ -1,19 +1,19 @@
 {
-  "name": "smriti-sangrokkhon",
+  "name": "smriti-sangrokkhon-admin",
   "version": "1.0.0",
   "private": true,
   "scripts": {
     "build": "rm -rf www && mkdir -p www && cp *.html *.js *.css www/",
-    "sync": "npx cap sync android",
+    "sync": "npm run build && npx cap sync android",
     "open:android": "npx cap open android",
     "icons": "npx capacitor-assets generate --android"
   },
   "dependencies": {
-    "@capacitor/core": "7.6.8",
-    "@capacitor/android": "7.6.8"
+    "@capacitor/core": "latest",
+    "@capacitor/android": "latest"
   },
   "devDependencies": {
-    "@capacitor/cli": "7.6.8",
-    "@capacitor/assets": "3.0.5"
+    "@capacitor/cli": "latest",
+    "@capacitor/assets": "^3.0.5"
   }
 }
