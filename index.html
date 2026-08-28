@@ -2,40 +2,61 @@
 <html lang="bn">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#0757d9">
 
-  <title>স্মৃতি সংরক্ষণ</title>
+  <title>স্মৃতি সংরক্ষণ — Profile Search</title>
 
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-  <!-- Header -->
   <header class="topbar">
-    <button class="icon-btn" id="menuBtn" type="button">☰</button>
+
+    <button
+      class="icon-btn"
+      id="menuBtn"
+      type="button"
+    >
+      ☰
+    </button>
 
     <div>
       <h1>স্মৃতি সংরক্ষণ</h1>
-      <small>সহজ সার্চ, দ্রুত তথ্য, নিরাপদ সংরক্ষণ</small>
+      <small>
+        সহজ সার্চ, দ্রুত তথ্য, নিরাপদ সংরক্ষণ
+      </small>
     </div>
 
-    <!-- Admin Button REMOVED -->
+    <!-- Admin Dashboard Button -->
+    <button
+      class="icon-btn"
+      id="adminBtn"
+      type="button"
+      aria-label="Admin Dashboard"
+    >
+      ⚙
+    </button>
+
   </header>
 
 
-  <!-- Main -->
   <main class="container">
 
-    <!-- Search -->
     <section class="search-card">
 
-      <div class="search-icon">⌕</div>
+      <div class="search-icon">
+        ⌕
+      </div>
 
-      <h2>প্রোফাইল সার্চ করুন</h2>
+      <h2>
+        প্রোফাইল সার্চ করুন
+      </h2>
 
-      <p>নাম লিখে প্রোফাইল খুঁজুন</p>
+      <p>
+        নাম লিখে প্রোফাইল খুঁজুন
+      </p>
 
       <div class="search-row">
 
@@ -59,16 +80,21 @@
     </section>
 
 
-    <!-- Statistics -->
     <section class="stats-grid">
 
       <div class="stat-card">
 
-        <span class="stat-title">Last Search</span>
+        <span class="stat-title">
+          Last Search
+        </span>
 
-        <div class="stat-icon">👤</div>
+        <div class="stat-icon">
+          👤
+        </div>
 
-        <strong id="lastSearch">—</strong>
+        <strong id="lastSearch">
+          —
+        </strong>
 
         <small id="lastSearchTime">
           এখনও কোনো সার্চ নেই
@@ -79,11 +105,17 @@
 
       <div class="stat-card">
 
-        <span class="stat-title">Total Profiles</span>
+        <span class="stat-title">
+          Total Profiles
+        </span>
 
-        <div class="stat-icon">👥</div>
+        <div class="stat-icon">
+          👥
+        </div>
 
-        <strong id="totalProfiles">0</strong>
+        <strong id="totalProfiles">
+          0
+        </strong>
 
         <small>
           টি প্রোফাইল আছে
@@ -94,11 +126,17 @@
 
       <div class="stat-card monthly">
 
-        <span class="stat-title">এই মাসে যুক্ত</span>
+        <span class="stat-title">
+          এই মাসে যুক্ত
+        </span>
 
-        <div class="stat-icon">📅</div>
+        <div class="stat-icon">
+          📅
+        </div>
 
-        <strong id="monthlyProfiles">0</strong>
+        <strong id="monthlyProfiles">
+          0
+        </strong>
 
         <small>
           টি প্রোফাইল এই মাসে যোগ হয়েছে
@@ -109,7 +147,6 @@
     </section>
 
 
-    <!-- Search Results -->
     <section
       id="results"
       class="results hidden"
@@ -118,7 +155,6 @@
   </main>
 
 
-  <!-- Bottom Navigation -->
   <nav class="bottom-nav">
 
     <button
@@ -127,7 +163,9 @@
       type="button"
     >
       ⌂
-      <span>হোম</span>
+      <span>
+        হোম
+      </span>
     </button>
 
     <button
@@ -135,7 +173,9 @@
       type="button"
     >
       ◷
-      <span>সার্চ হিস্টরি</span>
+      <span>
+        সার্চ হিস্টরি
+      </span>
     </button>
 
     <button
@@ -143,26 +183,24 @@
       type="button"
     >
       ⓘ
-      <span>তথ্য</span>
+      <span>
+        তথ্য
+      </span>
     </button>
 
   </nav>
 
 
-  <!-- Toast -->
   <div
     id="toast"
     class="toast"
   ></div>
 
 
-  <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- Config -->
   <script src="config.js"></script>
 
-  <!-- App -->
   <script src="app.js"></script>
 
 </body>
