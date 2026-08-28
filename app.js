@@ -1,6 +1,6 @@
 /* =====================================================
    স্মৃতি সংরক্ষণ — Public App
-   Admin Dashboard সম্পূর্ণ Public App থেকে সরানো হয়েছে
+   Admin Dashboard Button Enabled
 ===================================================== */
 
 const supabaseLoaded = !!window.supabase;
@@ -26,25 +26,71 @@ const sb =
    Helper
 ===================================================== */
 
-const $ = (id) => document.getElementById(id);
+const $ = (id) =>
+  document.getElementById(id);
 
 
-const searchInput = $("searchInput");
-const searchBtn = $("searchBtn");
-const results = $("results");
+/* =====================================================
+   Elements
+===================================================== */
 
-const totalProfiles = $("totalProfiles");
-const monthlyProfiles = $("monthlyProfiles");
+const menuBtn =
+  $("menuBtn");
 
-const lastSearch = $("lastSearch");
-const lastSearchTime = $("lastSearchTime");
+const adminBtn =
+  $("adminBtn");
 
-const historyBtn = $("historyBtn");
-const infoBtn = $("infoBtn");
-const homeBtn = $("homeBtn");
+const homeBtn =
+  $("homeBtn");
 
-const menuBtn = $("menuBtn");
-const toast = $("toast");
+const searchInput =
+  $("searchInput");
+
+const searchBtn =
+  $("searchBtn");
+
+const historyBtn =
+  $("historyBtn");
+
+const infoBtn =
+  $("infoBtn");
+
+const results =
+  $("results");
+
+const toast =
+  $("toast");
+
+const totalProfiles =
+  $("totalProfiles");
+
+const monthlyProfiles =
+  $("monthlyProfiles");
+
+const lastSearch =
+  $("lastSearch");
+
+const lastSearchTime =
+  $("lastSearchTime");
+
+
+/* =====================================================
+   Admin Dashboard Button
+===================================================== */
+
+if (adminBtn) {
+
+  adminBtn.addEventListener(
+    "click",
+    function () {
+
+      window.location.href =
+        "admin.html";
+
+    }
+  );
+
+}
 
 
 /* =====================================================
@@ -52,16 +98,19 @@ const toast = $("toast");
 ===================================================== */
 
 function escapeHTML(value) {
-  return String(value ?? "").replace(
-    /[&<>"']/g,
-    (char) => ({
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#039;"
-    })[char]
-  );
+
+  return String(value ?? "")
+    .replace(
+      /[&<>"']/g,
+      (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      })[char]
+    );
+
 }
 
 
@@ -70,46 +119,80 @@ function escapeHTML(value) {
 ===================================================== */
 
 function showToast(message) {
-  if (!toast) return;
 
-  toast.textContent = message;
+  if (!toast) {
+    alert(message);
+    return;
+  }
 
-  toast.classList.add("show");
+  toast.textContent =
+    message;
 
-  setTimeout(() => {
-    toast.classList.remove("show");
-  }, 2500);
+  toast.classList.add(
+    "show"
+  );
+
+  setTimeout(
+    () => {
+      toast.classList.remove(
+        "show"
+      );
+    },
+    2500
+  );
+
 }
 
 
 /* =====================================================
-   Local Search History
+   Search History
 ===================================================== */
 
 function getSearchHistory() {
+
   try {
+
     return JSON.parse(
-      localStorage.getItem("smritiSearchHistory") || "[]"
+      localStorage.getItem(
+        "smritiSearchHistory"
+      ) || "[]"
     );
+
   } catch {
+
     return [];
+
   }
+
 }
 
 
-function saveSearchHistory(name, count) {
-  const history = getSearchHistory();
+function saveSearchHistory(
+  name,
+  count
+) {
+
+  const history =
+    getSearchHistory();
 
   history.unshift({
-    name,
-    count,
-    time: new Date().toISOString()
+
+    name: name,
+
+    count: count,
+
+    time:
+      new Date().toISOString()
+
   });
 
   localStorage.setItem(
     "smritiSearchHistory",
-    JSON.stringify(history.slice(0, 30))
+    JSON.stringify(
+      history.slice(0, 30)
+    )
   );
+
 }
 
 
@@ -117,39 +200,48 @@ function saveSearchHistory(name, count) {
    Last Search
 ===================================================== */
 
-function updateLastSearch(name, count) {
+function updateLastSearch(
+  name,
+  count
+) {
 
-  if (!lastSearch) return;
+  if (!lastSearch)
+    return;
+
+  lastSearch.textContent =
+    name || "—";
+
+
+  if (!lastSearchTime)
+    return;
+
 
   if (!name) {
-    lastSearch.textContent = "—";
 
-    if (lastSearchTime) {
-      lastSearchTime.textContent =
-        "এখনও কোনো সার্চ নেই";
-    }
-
-    return;
-  }
-
-  lastSearch.textContent = name;
-
-  if (lastSearchTime) {
-
-    if (count === 0) {
-      lastSearchTime.textContent =
-        "কোনো Profile পাওয়া যায়নি";
-    } else {
-      lastSearchTime.textContent =
-        `${count} টি Profile পাওয়া গেছে`;
-    }
+    lastSearchTime.textContent =
+      "এখনও কোনো সার্চ নেই";
 
   }
+
+  else if (count === 0) {
+
+    lastSearchTime.textContent =
+      "কোনো Profile পাওয়া যায়নি";
+
+  }
+
+  else {
+
+    lastSearchTime.textContent =
+      `${count} টি Profile পাওয়া গেছে`;
+
+  }
+
 }
 
 
 /* =====================================================
-   Load Dashboard Statistics
+   Dashboard Statistics
 ===================================================== */
 
 async function loadStats() {
@@ -157,51 +249,82 @@ async function loadStats() {
   if (!sb) {
 
     if (totalProfiles) {
-      totalProfiles.textContent = "0";
+      totalProfiles.textContent =
+        "0";
     }
 
     if (monthlyProfiles) {
-      monthlyProfiles.textContent = "0";
+      monthlyProfiles.textContent =
+        "0";
     }
 
     return;
   }
 
+
   try {
 
-    const { data, error } = await sb
+    const {
+      data,
+      error
+    } = await sb
       .from("profiles")
-      .select("id, created_at");
+      .select(
+        "id,created_at"
+      );
 
-    if (error) throw error;
 
-    const rows = data || [];
+    if (error)
+      throw error;
+
+
+    const rows =
+      data || [];
+
 
     if (totalProfiles) {
-      totalProfiles.textContent = rows.length;
+
+      totalProfiles.textContent =
+        rows.length;
+
     }
 
 
-    const now = new Date();
+    const now =
+      new Date();
 
-    const monthly = rows.filter((row) => {
 
-      if (!row.created_at) {
-        return false;
-      }
+    const monthly =
+      rows.filter(
+        (profile) => {
 
-      const date = new Date(row.created_at);
+          if (!profile.created_at)
+            return false;
 
-      return (
-        date.getFullYear() === now.getFullYear() &&
-        date.getMonth() === now.getMonth()
-      );
 
-    }).length;
+          const date =
+            new Date(
+              profile.created_at
+            );
+
+
+          return (
+            date.getFullYear() ===
+              now.getFullYear() &&
+
+            date.getMonth() ===
+              now.getMonth()
+          );
+
+        }
+      ).length;
 
 
     if (monthlyProfiles) {
-      monthlyProfiles.textContent = monthly;
+
+      monthlyProfiles.textContent =
+        monthly;
+
     }
 
   } catch (error) {
@@ -212,6 +335,7 @@ async function loadStats() {
     );
 
   }
+
 }
 
 
@@ -219,18 +343,19 @@ async function loadStats() {
    Search Profiles
 ===================================================== */
 
-async function searchProfiles(name) {
+async function searchProfiles(
+  name
+) {
 
-  const queryText = String(name || "").trim();
+  const queryText =
+    String(name || "").trim();
+
 
   if (!queryText) {
 
-    showToast("নাম লিখে সার্চ করুন");
-
-    if (results) {
-      results.classList.add("hidden");
-      results.innerHTML = "";
-    }
+    showToast(
+      "নাম লিখে সার্চ করুন"
+    );
 
     return;
   }
@@ -238,11 +363,15 @@ async function searchProfiles(name) {
 
   if (results) {
 
-    results.classList.remove("hidden");
+    results.classList.remove(
+      "hidden"
+    );
 
     results.innerHTML = `
       <div class="search-card">
-        <p>🔎 Profile খোঁজা হচ্ছে...</p>
+        <p>
+          🔎 Profile খোঁজা হচ্ছে...
+        </p>
       </div>
     `;
 
@@ -254,42 +383,57 @@ async function searchProfiles(name) {
     let rows = [];
 
 
-    /* -----------------------------
-       Supabase
-    ----------------------------- */
-
     if (sb) {
 
-      const { data, error } = await sb
+      const {
+        data,
+        error
+      } = await sb
         .from("profiles")
         .select("*")
-        .ilike("name", `%${queryText}%`)
-        .order("created_at", {
-          ascending: false
-        });
+        .ilike(
+          "name",
+          `%${queryText}%`
+        )
+        .order(
+          "created_at",
+          {
+            ascending: false
+          }
+        );
 
-      if (error) throw error;
 
-      rows = data || [];
+      if (error)
+        throw error;
+
+
+      rows =
+        data || [];
 
     }
 
 
-    /* -----------------------------
-       Demo / Offline
-    ----------------------------- */
-
     else {
 
-      const stored = JSON.parse(
-        localStorage.getItem("demoProfiles") || "[]"
-      );
+      const stored =
+        JSON.parse(
+          localStorage.getItem(
+            "demoProfiles"
+          ) || "[]"
+        );
 
-      rows = stored.filter((profile) =>
-        String(profile.name || "")
-          .toLowerCase()
-          .includes(queryText.toLowerCase())
-      );
+
+      rows =
+        stored.filter(
+          (profile) =>
+            String(
+              profile.name || ""
+            )
+              .toLowerCase()
+              .includes(
+                queryText.toLowerCase()
+              )
+        );
 
     }
 
@@ -299,13 +443,16 @@ async function searchProfiles(name) {
       rows.length
     );
 
+
     saveSearchHistory(
       queryText,
       rows.length
     );
 
 
-    renderResults(rows);
+    renderResults(
+      rows
+    );
 
 
   } catch (error) {
@@ -315,9 +462,8 @@ async function searchProfiles(name) {
       error
     );
 
-    if (results) {
 
-      results.classList.remove("hidden");
+    if (results) {
 
       results.innerHTML = `
         <div class="search-card">
@@ -338,24 +484,35 @@ async function searchProfiles(name) {
    Render Results
 ===================================================== */
 
-function renderResults(rows) {
+function renderResults(
+  rows
+) {
 
-  if (!results) return;
+  if (!results)
+    return;
 
 
   if (!rows.length) {
 
-    results.classList.remove("hidden");
+    results.classList.remove(
+      "hidden"
+    );
 
     results.innerHTML = `
       <div class="search-card">
-        <div class="search-icon">🔎</div>
 
-        <h3>কোনো Profile পাওয়া যায়নি</h3>
+        <div class="search-icon">
+          🔎
+        </div>
+
+        <h3>
+          কোনো Profile পাওয়া যায়নি
+        </h3>
 
         <p>
           অন্য নাম দিয়ে আবার চেষ্টা করুন।
         </p>
+
       </div>
     `;
 
@@ -363,132 +520,178 @@ function renderResults(rows) {
   }
 
 
-  results.classList.remove("hidden");
+  results.classList.remove(
+    "hidden"
+  );
 
 
-  results.innerHTML = rows.map((profile) => {
+  results.innerHTML =
+    rows.map(
+      (profile) => {
 
-    const name =
-      escapeHTML(profile.name || "নাম নেই");
-
-    const father =
-      escapeHTML(profile.father || "");
-
-    const village =
-      escapeHTML(profile.village || "");
-
-    const age =
-      profile.age !== null &&
-      profile.age !== undefined &&
-      profile.age !== ""
-        ? escapeHTML(profile.age)
-        : "";
-
-    const reason =
-      escapeHTML(
-        profile.death_reason ||
-        profile.reason ||
-        ""
-      );
+        const name =
+          escapeHTML(
+            profile.name ||
+            "নাম নেই"
+          );
 
 
-    const date =
-      escapeHTML(
-        profile.date ||
-        profile.death_date ||
-        ""
-      );
+        const father =
+          escapeHTML(
+            profile.father ||
+            ""
+          );
 
 
-    const photo =
-      profile.photo_url
-        ? `
-          <img
-            src="${escapeHTML(profile.photo_url)}"
-            alt="${name}"
-            class="profile-photo"
-          >
-        `
-        : `
-          <div class="profile-photo-placeholder">
-            👤
-          </div>
+        const village =
+          escapeHTML(
+            profile.village ||
+            ""
+          );
+
+
+        const age =
+          profile.age !== null &&
+          profile.age !== undefined &&
+          profile.age !== ""
+            ? escapeHTML(
+                profile.age
+              )
+            : "";
+
+
+        const reason =
+          escapeHTML(
+            profile.death_reason ||
+            ""
+          );
+
+
+        const date =
+          escapeHTML(
+            profile.date ||
+            profile.death_date ||
+            ""
+          );
+
+
+        const photo =
+          profile.photo_url
+            ? `
+              <img
+                src="${escapeHTML(
+                  profile.photo_url
+                )}"
+                alt="${name}"
+                class="profile-photo"
+              >
+            `
+            : `
+              <div class="profile-photo-placeholder">
+                👤
+              </div>
+            `;
+
+
+        return `
+
+          <article class="profile-card">
+
+            <div class="profile-card-top">
+
+              ${photo}
+
+              <div class="profile-main">
+
+                <h3>
+                  ${name}
+                </h3>
+
+                ${
+                  father
+                    ? `
+                      <p>
+                        👤 ${father}
+                      </p>
+                    `
+                    : ""
+                }
+
+                ${
+                  village
+                    ? `
+                      <p>
+                        📍 ${village}
+                      </p>
+                    `
+                    : ""
+                }
+
+              </div>
+
+            </div>
+
+
+            <div class="profile-details">
+
+              ${
+                age
+                  ? `
+                    <div>
+                      <small>
+                        বয়স
+                      </small>
+
+                      <strong>
+                        ${age} বছর
+                      </strong>
+                    </div>
+                  `
+                  : ""
+              }
+
+
+              ${
+                date
+                  ? `
+                    <div>
+                      <small>
+                        তারিখ
+                      </small>
+
+                      <strong>
+                        ${date}
+                      </strong>
+                    </div>
+                  `
+                  : ""
+              }
+
+
+              ${
+                reason
+                  ? `
+                    <div>
+                      <small>
+                        মৃত্যুর কারণ
+                      </small>
+
+                      <strong>
+                        ${reason}
+                      </strong>
+                    </div>
+                  `
+                  : ""
+              }
+
+            </div>
+
+          </article>
+
         `;
 
-
-    return `
-
-      <article class="profile-card">
-
-        <div class="profile-card-top">
-
-          ${photo}
-
-          <div class="profile-main">
-
-            <h3>${name}</h3>
-
-            ${
-              father
-                ? `<p>👤 ${father}</p>`
-                : ""
-            }
-
-            ${
-              village
-                ? `<p>📍 ${village}</p>`
-                : ""
-            }
-
-          </div>
-
-        </div>
-
-
-        <div class="profile-details">
-
-          ${
-            age
-              ? `
-                <div>
-                  <small>বয়স</small>
-                  <strong>${age} বছর</strong>
-                </div>
-              `
-              : ""
-          }
-
-
-          ${
-            date
-              ? `
-                <div>
-                  <small>তারিখ</small>
-                  <strong>${date}</strong>
-                </div>
-              `
-              : ""
-          }
-
-
-          ${
-            reason
-              ? `
-                <div>
-                  <small>মৃত্যুর কারণ</small>
-                  <strong>${reason}</strong>
-                </div>
-              `
-              : ""
-          }
-
-        </div>
-
-      </article>
-
-    `;
-
-  }).join("");
+      }
+    ).join("");
 
 }
 
@@ -516,7 +719,7 @@ if (searchBtn) {
 
 
 /* =====================================================
-   Enter Search
+   Enter Key Search
 ===================================================== */
 
 if (searchInput) {
@@ -542,7 +745,7 @@ if (searchInput) {
 
 
 /* =====================================================
-   Search History
+   History
 ===================================================== */
 
 if (historyBtn) {
@@ -562,11 +765,11 @@ if (historyBtn) {
         );
 
         return;
-
       }
 
 
-      if (!results) return;
+      if (!results)
+        return;
 
 
       results.classList.remove(
@@ -578,29 +781,40 @@ if (historyBtn) {
 
         <div class="search-card">
 
-          <h3>◷ সার্চ হিস্টরি</h3>
+          <h3>
+            ◷ সার্চ হিস্টরি
+          </h3>
 
           <div class="history-list">
 
-            ${history.map((item) => `
+            ${
+              history.map(
+                (item) => `
 
-              <button
-                type="button"
-                class="history-item"
-                data-history-name="${escapeHTML(item.name)}"
-              >
+                  <button
+                    type="button"
+                    class="history-item"
+                    data-history-name="${escapeHTML(
+                      item.name
+                    )}"
+                  >
 
-                <strong>
-                  ${escapeHTML(item.name)}
-                </strong>
+                    <strong>
+                      ${escapeHTML(
+                        item.name
+                      )}
+                    </strong>
 
-                <small>
-                  ${item.count} টি ফলাফল
-                </small>
+                    <small>
+                      ${item.count}
+                      টি ফলাফল
+                    </small>
 
-              </button>
+                  </button>
 
-            `).join("")}
+                `
+              ).join("")
+            }
 
           </div>
 
@@ -610,26 +824,38 @@ if (historyBtn) {
 
 
       document
-        .querySelectorAll(".history-item")
-        .forEach((button) => {
+        .querySelectorAll(
+          ".history-item"
+        )
+        .forEach(
+          (button) => {
 
-          button.addEventListener(
-            "click",
-            () => {
+            button.addEventListener(
+              "click",
+              () => {
 
-              const name =
-                button.dataset.historyName;
+                const name =
+                  button.dataset
+                    .historyName;
 
-              if (searchInput) {
-                searchInput.value = name;
+
+                if (searchInput) {
+
+                  searchInput.value =
+                    name;
+
+                }
+
+
+                searchProfiles(
+                  name
+                );
+
               }
+            );
 
-              searchProfiles(name);
-
-            }
-          );
-
-        });
+          }
+        );
 
     }
   );
@@ -647,11 +873,14 @@ if (infoBtn) {
     "click",
     () => {
 
-      if (!results) return;
+      if (!results)
+        return;
+
 
       results.classList.remove(
         "hidden"
       );
+
 
       results.innerHTML = `
 
@@ -661,7 +890,9 @@ if (infoBtn) {
             ℹ️
           </div>
 
-          <h2>স্মৃতি সংরক্ষণ</h2>
+          <h2>
+            স্মৃতি সংরক্ষণ
+          </h2>
 
           <p>
             প্রিয়জনের স্মৃতি, ছবি ও
@@ -700,8 +931,11 @@ if (homeBtn) {
 
       }
 
+
       if (searchInput) {
+
         searchInput.focus();
+
       }
 
     }
@@ -731,7 +965,7 @@ if (menuBtn) {
 
 
 /* =====================================================
-   Start App
+   Start
 ===================================================== */
 
 document.addEventListener(
@@ -742,9 +976,3 @@ document.addEventListener(
 
   }
 );
-
-
-/* =====================================================
-   IMPORTANT
-   এখানে কোনো Admin Dashboard code নেই।
-===================================================== */
